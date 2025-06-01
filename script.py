@@ -16,12 +16,13 @@ En MongoDB no necesitas crear explícitamente la base de datos antes de usarla. 
 import pandas as pd
 from pymongo import MongoClient
 
-# Conexión a MongoDB (asegúrate de que el servidor esté corriendo en localhost:27017)
+# Conexión a MongoDB 
+# Se debe asegurar de que el servidor esté corriendo en localhost:27017
 client = MongoClient("mongodb://localhost:27017/")
 db = client["torneos_atp"]
 coleccion = db["partidos"]
 
-# Leer archivos Excel
+# Leer archivos Excel con pandas
 df_2022 = pd.read_excel("data/2022.xlsx")
 df_2023 = pd.read_excel("data/2023.xlsx")
 
@@ -36,11 +37,18 @@ coleccion.insert_many(documentos_2023)
 print("Datos insertados correctamente en MongoDB.")
 
 # CONSULTA 1: Mostrar los partidos jugados en 'Adelaide'
+# Recorro la coleccion para encontrar todos los datos/documentos cuyo 
+# atributo Location sea igual a Adelaide. Luego, muestro los primeros 
+# cinco resultados encontrados, imprimiendo los campos fecha, 
+# ganador y perdedor.
 print("\nConsulta 1: Partidos jugados en Adelaide")
 for partido in coleccion.find({"Location": "Adelaide"}).limit(5):
     print(f"{partido['Date']} - {partido['Winner']} vs {partido['Loser']}")
 
 # CONSULTA 2: Buscar partidos con resultado 'Retired'
+# En esta consulta filtro los datos/documentos cuyo campo Comment tenga 
+# el valor Retired. Igual que en la anterior consulta imprimo solamente 
+# la fecha, el ganador y el perdedor.
 print("\nConsulta 2: Partidos terminados como 'Retired'")
 for partido in coleccion.find({"Comment": "Retired"}):
     print(f"{partido['Date']} - {partido['Winner']} vs {partido['Loser']} (Retired)")
